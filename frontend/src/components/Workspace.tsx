@@ -185,11 +185,17 @@ export default function Workspace({ onHome }: Props) {
 
   const exportReport = () => {
     if (!result) return;
-    const blob = new Blob([result.report], { type: "text/plain" });
+    const html = markdownToHtml(result.report);
+    const styled = `<html><head><style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px; line-height: 1.7; color: #1f2937; }
+  h1,h2,h3 { margin-top: 1.5em; color: #111827; } ul { padding-left: 1.5em; }
+  a { color: #2563eb; text-decoration: none; } a:hover { text-decoration: underline; }
+</style></head><body>${html}</body></html>`;
+    const blob = new Blob([styled], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "research-report.txt";
+    a.download = "research-report.html";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -430,7 +436,12 @@ export default function Workspace({ onHome }: Props) {
 
               {/* AGENT GRAPH */}
               <div style={{ padding: 16, borderBottom: "1px solid var(--border)" }}>
-                <div style={{ fontSize: 12, fontFamily: "var(--mono)", color: "var(--text3)", letterSpacing: 1, textTransform: "uppercase", marginBottom: 10 }}>Agent graph</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <span style={{ fontSize: 12, fontFamily: "var(--mono)", color: "var(--text3)", letterSpacing: 1, textTransform: "uppercase" }}>Agent graph</span>
+                  {phase === "researching" && (
+                    <span style={{ fontSize: 10, color: "var(--text3)", fontStyle: "italic" }}>(Simulated progress)</span>
+                  )}
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {AGENT_DEFS.map((a) => (
                     <AgentNode key={a.id} icon={a.icon} name={a.name} state={agentStates[a.id]} status={agentStatuses[a.id]} />
@@ -440,7 +451,12 @@ export default function Workspace({ onHome }: Props) {
 
               {/* ACTIVITY LOG */}
               <div ref={activityLogRef} style={{ flex: 1, overflowY: "auto", padding: 16 }}>
-                <div style={{ fontSize: 12, fontFamily: "var(--mono)", color: "var(--text3)", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12, paddingBottom: 8, borderBottom: "1px solid var(--border)" }}>Live activity</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingBottom: 8, borderBottom: "1px solid var(--border)" }}>
+                  <span style={{ fontSize: 12, fontFamily: "var(--mono)", color: "var(--text3)", letterSpacing: 1, textTransform: "uppercase" }}>Live activity</span>
+                  {phase === "researching" && (
+                    <span style={{ fontSize: 10, color: "var(--text3)", fontStyle: "italic" }}>(Simulated)</span>
+                  )}
+                </div>
                 {activities.map((a) => (
                   <div key={a.id} className="activity-item">
                     <div className="activity-icon">{a.icon}</div>

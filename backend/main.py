@@ -22,6 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import asyncio
+from fastapi.responses import JSONResponse
+
 class ResearchRequest(BaseModel):
     query: str
 
@@ -42,8 +45,15 @@ def get_config():
 
 
 @app.post("/research")
-def research(req: ResearchRequest):
-    return run_research_pipeline(req.query)
+async def research(req: ResearchRequest):
+    try:
+        result = await asyncio.to_thread(run_research_pipeline, req.query)
+        return result
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": "pipeline_failed", "message": str(e)}
+        )
 
 
 @app.get("/")

@@ -13,6 +13,7 @@ load_dotenv()
 llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     temperature=0,
+    timeout=60,
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
@@ -33,7 +34,7 @@ def build_reader_agent():
 #writer chain - using runnables/lce pipline
 
 writer_prompt = ChatPromptTemplate.from_messages([ #a lists
-("system", "You are an expert research writer. Write clear, structured and insightful reports."),
+("system", "You are an expert research writer. Write clear, structured and insightful reports. Use clean Markdown for formatting (e.g. ## headings, **bold text**, and bullet points)."),
     ("human", """Write a detailed research report on the topic below.
 
 Topic: {topic}
@@ -47,7 +48,7 @@ Structure the report as:
 - Conclusion
 - Sources (list all URLs found in the research)
 
-Be detailed, factual and professional."""),
+Be detailed, factual and professional. Please use standard Markdown formatting: use `##` for sections and sub-sections, `**` for bolding, and standard bullet points `-` (not mixed symbols) so it can be parsed correctly."""),
 ])
 
 #invoking writer chain 

@@ -12,9 +12,16 @@ export function markdownToHtml(md: string): string {
       .replace(/^[\-\*] (.+)$/gm, "<li>$1</li>")
       .replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
       .replace(
-        /https?:\/\/[^\s)]+/g,
-        (url) =>
-          `<a href="${url}" target="_blank" rel="noopener" style="color:var(--blue)">${url}</a>`
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener" style="color:var(--blue)">$1</a>'
+      )
+      .replace(
+        /(?<!href=")(https?:\/\/[^\s)<]+)/g,
+        (url) => {
+          const cleanUrl = url.replace(/[.,;:]+$/, "");
+          const trailing = url.slice(cleanUrl.length);
+          return `<a href="${cleanUrl}" target="_blank" rel="noopener" style="color:var(--blue)">${cleanUrl}</a>${trailing}`;
+        }
       )
       .replace(/\n\n+/g, "</p><p>")
       .replace(/^(?!<[hul])(.+)/, "<p>$1") + "</p>"

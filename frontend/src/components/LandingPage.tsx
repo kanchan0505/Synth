@@ -95,7 +95,7 @@ export default function LandingPage({ onLaunch }: Props) {
             {[
               { icon: "🔍", title: "Web Search", desc: "Tavily-powered search finds the most recent and relevant sources for any topic, filtering noise automatically." },
               { icon: "📖", title: "Deep Reading", desc: "BeautifulSoup scrapes full page content — not just snippets — giving the writer real context to work with." },
-              { icon: "✍️", title: "Structured Writing", desc: "GPT-based writer chain produces introduction, key findings, analysis, conclusion, and cited sources." },
+              { icon: "✍️", title: "Structured Writing", desc: "Groq-powered writer chain produces introduction, key findings, analysis, conclusion, and cited sources." },
               { icon: "🎯", title: "Critic Review", desc: "A separate critic chain scores the report 1–10 and gives actionable improvement suggestions." },
               { icon: "⚡", title: "LangGraph Orchestration", desc: "Agents run as a reactive graph — each step's output feeds the next with zero manual wiring." },
               { icon: "📎", title: "Source Tracking", desc: "Every URL is captured and displayed with title, favicon, and snippet for full transparency." },
@@ -121,7 +121,7 @@ export default function LandingPage({ onLaunch }: Props) {
             {[
               { step: "step_01", title: "You enter a topic", desc: "Type any research question — a market, technology, concept, or competitive landscape. Synth handles everything from here." },
               { step: "step_02", title: "Search Agent queries the web", desc: "The Search Agent calls Tavily to find up to 5 fresh, reliable sources. It returns structured results: titles, URLs, and content snippets." },
-              { step: "step_03", title: "Reader Agent extracts content", desc: "Synth scrapes the most relevant URL for full-page content — headings, paragraphs, data — cleaned of navigation and ads." },
+              { step: "step_03", title: "Reader Agent extracts content", desc: "Synth scrapes the top 5 relevant URLs for full-page content — headings, paragraphs, data — cleaned of navigation and ads." },
               { step: "step_04", title: "Writer Chain composes the report", desc: "The Writer Chain synthesizes search results and scraped content into a structured report with introduction, key findings, and conclusion." },
               { step: "step_05", title: "Critic Chain scores the output", desc: "A separate Critic Chain reviews the report for accuracy, depth, and structure — giving a score and specific improvement notes." },
             ].map((item, i) => (

@@ -12,16 +12,35 @@ export interface ResearchResult {
 }
 
 export async function runResearch(query: string): Promise<ResearchResult> {
-  const res = await fetch(`${API_BASE}/research`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 90000);
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Server error ${res.status}${text ? `: ${text}` : ""}`);
+  try {
+    const res = await fetch(`${API_BASE}/research`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      let errorMsg = text;
+      try {
+        const parsed = JSON.parse(text);
+        errorMsg = parsed.message || parsed.error || text;
+      } catch {}
+      throw new Error(errorMsg || `Server error ${res.status}`);
+    }
+
+    return res.json();
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      throw new Error("Request timed out (90s limit reached). Please verify backend status.");
+    }
+    throw error;
   }
-
-  return res.json();
 }
